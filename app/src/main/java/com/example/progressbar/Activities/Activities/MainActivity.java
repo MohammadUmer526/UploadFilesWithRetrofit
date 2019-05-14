@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.progressbar.Activities.Custom.MyHttpEntity;
+import com.example.progressbar.Activities.database.SQLiteHelper;
 import com.example.progressbar.R;
 
 import org.apache.http.HttpEntity;
@@ -35,7 +36,6 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -49,12 +49,14 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private static final int REQUEST_FILE_CODE = 200;
     private static final int READ_REQUEST_CODE = 300;
     private static final String SERVER_PATH = "http://192.168.142.20/api/upload_files/index.php";
-    Button fileBrowseBtn;
-    Button uploadBtn;
-    ImageView previewImage;
-    TextView fileName;
-    Uri fileUri;
+    private Button fileBrowseBtn;
+    private Button uploadBtn;
+    private ImageView previewImage;
+    private TextView fileName;
+    private Uri fileUri;
     private File file;
+
+    private static SQLiteHelper sqLiteHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +68,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         previewImage = findViewById(R.id.iv_preview);
         fileName = findViewById(R.id.tv_file_name);
 
+
+        sqLiteHelper = new SQLiteHelper(this, "FILEDB.sqlite", null, 1);
+        sqLiteHelper.queryData("CREATE TABLE IF NOT EXISTS FILE(Id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR )");
         fileBrowseBtn.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
@@ -79,8 +84,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 } else {
                     //If permission is not present request for the same.
                     EasyPermissions.requestPermissions(MainActivity.this,
-                            getString(R.string.read_file), READ_REQUEST_CODE,
-                            Manifest.permission.READ_EXTERNAL_STORAGE);
+                            getString(R.string.read_file),
+                            READ_REQUEST_CODE, Manifest.permission.READ_EXTERNAL_STORAGE);
                 }
 
             }
@@ -92,23 +97,25 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 if (file != null) {
                     UploadAsyncTask uploadAsyncTask = new UploadAsyncTask(MainActivity.this);
                     uploadAsyncTask.execute();
-                    
+                    sqLiteHelper.insertData(
+                            fileName.getText().toString().trim()
+
+                    );
 
                 } else {
                     Toast.makeText(getApplicationContext(),
                             "Please select a file first", Toast.LENGTH_LONG).show();
-
                 }
             }
         });
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_FILE_CODE && resultCode == Activity.RESULT_OK) {
             fileUri = data.getData();
             previewFile(fileUri);
-
         }
     }
 
@@ -164,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private String getRealPathFromURIPath(Uri contentURI, Activity activity) {
         Cursor cursor = activity.getContentResolver().query(contentURI, null,
                 null, null, null);
-        String realPath = "";
+        String realPath;
         if (cursor == null) {
             realPath = contentURI.getPath();
         } else {
@@ -235,8 +242,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         @Override
         protected String doInBackground(Void... params) {
 
-            HttpResponse httpResponse = null;
-            HttpEntity httpEntity = null;
+            HttpResponse httpResponse;
+            HttpEntity httpEntity;
             String responseString = null;
 
             try {
@@ -305,7 +312,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         @Override
         protected void onProgressUpdate(Integer... progress) {
             // Update process
-            this.progressDialog.setProgress((int) progress[0]);
+            this.progressDialog.setProgress(progress[0]);
         }
     }
 

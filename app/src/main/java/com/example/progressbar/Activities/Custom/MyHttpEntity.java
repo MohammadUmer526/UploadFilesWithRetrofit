@@ -33,7 +33,7 @@ public class MyHttpEntity extends HttpEntityWrapper {
         void transferred(float progress);
     }
 
-    public static class ProgressOutputStream extends FilterOutputStream {
+    static class ProgressOutputStream extends FilterOutputStream {
 
         private final ProgressListener progressListener;
 
@@ -41,9 +41,9 @@ public class MyHttpEntity extends HttpEntityWrapper {
 
         private long total;
 
-        public ProgressOutputStream(final OutputStream outputStream,
-                                    final ProgressListener progressListener,
-                                    long total) {
+        ProgressOutputStream(final OutputStream outputStream,
+                             final ProgressListener progressListener,
+                             long total) {
 
             super(outputStream);
             this.progressListener = progressListener;
