@@ -4,7 +4,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.example.progressbar"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -39,6 +39,7 @@ dependencies {
     //Easy permissions for handling Run time permissions
     implementation 'pub.devrel:easypermissions:0.2.0'
 
+
     //Apache httpclient-android library
     implementation group: 'org.apache.httpcomponents', name: 'httpclient-android', version: '4.3.5.1'
 
@@ -46,4 +47,6 @@ dependencies {
     implementation('org.apache.httpcomponents:httpmime:4.3') {
         exclude module: "httpclient"
     }
+
+    implementation 'com.github.Adilhusen:circle-progress-ad-android-:1.0'
 }

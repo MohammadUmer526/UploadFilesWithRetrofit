@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_FILE_CODE = 200;
     private static final int READ_REQUEST_CODE = 300;
-    private static final String SERVER_PATH = "http://192.168.142.20/api/upload_files/index.php";
+    private static final String SERVER_PATH = "http://192.168.166.2:81/api/upload_files/index.php";
     private Button fileBrowseBtn;
     private Button uploadBtn;
     private ImageView previewImage;
@@ -294,7 +294,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
             // Init and show dialog
             this.progressDialog = new ProgressDialog(this.context);
-            this.progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            this.progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             this.progressDialog.setCancelable(false);
             this.progressDialog.show();
         }
