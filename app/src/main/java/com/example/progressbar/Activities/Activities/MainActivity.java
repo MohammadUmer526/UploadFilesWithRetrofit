@@ -20,9 +20,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.progressbar.Activities.Custom.CircularProgressBar;
+import com.example.progressbar.Activities.Custom.MultipartHttpEntity;
 import com.example.progressbar.Activities.Custom.MyHttpEntity;
 import com.example.progressbar.Activities.database.SQLiteHelper;
 import com.example.progressbar.R;
@@ -45,6 +48,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
+
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_FILE_CODE = 200;
     private static final int READ_REQUEST_CODE = 300;
@@ -52,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private Button fileBrowseBtn;
     private Button uploadBtn;
     private ImageView previewImage;
-    private TextView fileName;
+    private TextView fileName, txtPercentage;
     private Uri fileUri;
     private File file;
 
@@ -67,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         uploadBtn = findViewById(R.id.btn_upload);
         previewImage = findViewById(R.id.iv_preview);
         fileName = findViewById(R.id.tv_file_name);
+        txtPercentage = findViewById(R.id.txtPercentage);
 
 
         sqLiteHelper = new SQLiteHelper(this, "FILEDB.sqlite", null, 1);
@@ -233,6 +238,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         HttpClient httpClient = new DefaultHttpClient();
         private Context context;
         Exception exception;
+
         private ProgressDialog progressDialog;
 
         private UploadAsyncTask(Context context) {
@@ -259,8 +265,20 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                             @Override
                             public void transferred(float progress) {
                                 publishProgress((int) progress);
+                               //progressDialog.setProgress((int) progress);
                             }
                         };
+
+               /* MultipartHttpEntity entity = new MultipartHttpEntity(
+                        new MultipartHttpEntity.ProgressListener() {
+
+                            @Override
+                            public void transferred(long num) {
+                                publishProgress((int) ((num / (float) totalSize) * 100));
+                            }
+                        });
+                        totalSize = entity.getContentLength();
+                        */
 
                 // POST
                 httpPost.setEntity(new MyHttpEntity(multipartEntityBuilder.build(),
@@ -268,6 +286,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
 
                 httpResponse = httpClient.execute(httpPost);
+
                 httpEntity = httpResponse.getEntity();
 
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -294,7 +313,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
             // Init and show dialog
             this.progressDialog = new ProgressDialog(this.context);
-            this.progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+           this.progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             this.progressDialog.setCancelable(false);
             this.progressDialog.show();
         }
@@ -305,14 +324,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             // Close dialog
             this.progressDialog.dismiss();
             Toast.makeText(getApplicationContext(),
-                    result, Toast.LENGTH_LONG).show();
+                    "Uploaded", Toast.LENGTH_LONG).show();
             showFileChooser();
         }
 
         @Override
         protected void onProgressUpdate(Integer... progress) {
             // Update process
+
             this.progressDialog.setProgress(progress[0]);
+//            txtPercentage.setText(String.valueOf(progress[0]) + "%");
         }
     }
 

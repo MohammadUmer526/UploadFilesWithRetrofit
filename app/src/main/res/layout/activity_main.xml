@@ -3,11 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:gravity="center_vertical"
-    xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".Activities.Activities.MainActivity">
+    <TextView
+        android:id="@+id/txtPercentage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="15dp"
+        android:layout_marginTop="15dp"
+        android:textColor="@color/txt_font"
+        android:textSize="30sp" />
 
     <Button
         android:id="@+id/btn_choose_file"
@@ -40,6 +47,8 @@
         android:layout_gravity="center"
         android:text="@string/upload"
         android:visibility="gone" />
+
+
 
 
 </LinearLayout>

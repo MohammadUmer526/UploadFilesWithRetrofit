@@ -1,10 +1,13 @@
 package com.example.progressbar.Activities.database;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
+
+import java.io.File;
 
 
 public class SQLiteHelper extends SQLiteOpenHelper {
@@ -29,17 +32,16 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         statement.clearBindings();
         statement.bindString(1, name);
 
-
         statement.executeInsert();
     }
 
     public Cursor getData(String sql){
         SQLiteDatabase database = getWritableDatabase();
-
         return database.rawQuery(sql, null);
 
-
     }
+
+
     @Override
     public void onCreate(SQLiteDatabase db) {
 

@@ -1,6 +1,5 @@
 package com.example.progressbar.Activities.Custom;
 
-
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.HttpEntityWrapper;
 import java.io.FilterOutputStream;
@@ -15,7 +14,8 @@ public class MyHttpEntity extends HttpEntityWrapper {
      * @param wrappedEntity
      */
 
-    private ProgressListener progressListener;
+   private ProgressListener progressListener;
+//    private CircularProgressBar circularProgressBar;
 
     public MyHttpEntity(final HttpEntity entity, final ProgressListener progressListener) {
         super(entity);
@@ -32,6 +32,11 @@ public class MyHttpEntity extends HttpEntityWrapper {
     public interface ProgressListener {
         void transferred(float progress);
     }
+
+//    public interface CircularProgressBar{
+//        void transferred(float progress);
+//    }
+
 
     static class ProgressOutputStream extends FilterOutputStream {
 
