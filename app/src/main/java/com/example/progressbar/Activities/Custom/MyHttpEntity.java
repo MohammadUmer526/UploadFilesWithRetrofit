@@ -15,7 +15,7 @@ public class MyHttpEntity extends HttpEntityWrapper {
      */
 
    private ProgressListener progressListener;
-//    private CircularProgressBar circularProgressBar;
+
 
     public MyHttpEntity(final HttpEntity entity, final ProgressListener progressListener) {
         super(entity);
@@ -31,12 +31,8 @@ public class MyHttpEntity extends HttpEntityWrapper {
 
     public interface ProgressListener {
         void transferred(float progress);
+
     }
-
-//    public interface CircularProgressBar{
-//        void transferred(float progress);
-//    }
-
 
     static class ProgressOutputStream extends FilterOutputStream {
 
@@ -54,6 +50,7 @@ public class MyHttpEntity extends HttpEntityWrapper {
             this.progressListener = progressListener;
             this.transferred = 0;
             this.total = total;
+
         }
 
         @Override
@@ -72,7 +69,7 @@ public class MyHttpEntity extends HttpEntityWrapper {
             this.progressListener.transferred(this.getCurrentProgress());
         }
 
-        private float getCurrentProgress() {
+        public float getCurrentProgress() {
             return ((float) this.transferred / this.total) * 100;
         }
     }

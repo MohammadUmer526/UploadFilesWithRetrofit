@@ -14,6 +14,8 @@ import android.os.Build;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -251,6 +253,22 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             HttpResponse httpResponse;
             HttpEntity httpEntity;
             String responseString = null;
+            MyHttpEntity.ProgressListener progressListener1 = new MyHttpEntity.ProgressListener() {
+                @Override
+                public void transferred(float progress) {
+                    for (int i = 0; i < 20; i++) {
+                        publishProgress((int) progress);
+                        try {
+                            Thread.sleep(88);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    progressDialog.dismiss();
+
+                }
+            };
+
 
             try {
                 HttpPost httpPost = new HttpPost(SERVER_PATH);
@@ -265,24 +283,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                             @Override
                             public void transferred(float progress) {
                                 publishProgress((int) progress);
-                               //progressDialog.setProgress((int) progress);
+                               progressDialog.setProgress((int) progress);
+                               Log.i("Progress", "Showing");
                             }
                         };
 
-               /* MultipartHttpEntity entity = new MultipartHttpEntity(
-                        new MultipartHttpEntity.ProgressListener() {
 
-                            @Override
-                            public void transferred(long num) {
-                                publishProgress((int) ((num / (float) totalSize) * 100));
-                            }
-                        });
-                        totalSize = entity.getContentLength();
-                        */
 
                 // POST
                 httpPost.setEntity(new MyHttpEntity(multipartEntityBuilder.build(),
-                        progressListener));
+                        progressListener1));
 
 
                 httpResponse = httpClient.execute(httpPost);
@@ -312,10 +322,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         protected void onPreExecute() {
 
             // Init and show dialog
+
             this.progressDialog = new ProgressDialog(this.context);
-           this.progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            this.progressDialog.setMax(100);
+            this.progressDialog.setMessage("Uploading " + file.getName());
+            this.progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
             this.progressDialog.setCancelable(false);
             this.progressDialog.show();
+
+
+
         }
 
         @Override
@@ -331,9 +347,15 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         @Override
         protected void onProgressUpdate(Integer... progress) {
             // Update process
+//            int percent = (int)(100.0*(double)progress[0]/file.length() + 0.5);
+//            this.progressDialog.setMax(100);
+//            this.progressDialog.setMessage("Uploading " + file.getName());
+//            this.progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+//            this.progressDialog.setProgress(percent);
+//            this.progressDialog.setSecondaryProgress(100);
+//            this.progressDialog.show();
 
-            this.progressDialog.setProgress(progress[0]);
-//            txtPercentage.setText(String.valueOf(progress[0]) + "%");
+            progressDialog.incrementProgressBy(progress[0]);
         }
     }
 
